@@ -1,7 +1,6 @@
 package qualified.io.exam;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Stack;
 
 public class PolishReverseNotation {
 
@@ -19,7 +18,8 @@ public class PolishReverseNotation {
 			return 0;
 		}
 
-		List<Double> listValues = new ArrayList<Double>();
+		final Stack<Double> stackValues = new Stack<Double>();
+
 		double lastCalculatedValue = 0;
 
 		for (String token : expr.split(" ")) {
@@ -27,15 +27,14 @@ public class PolishReverseNotation {
 			try {
 				double value = Double.parseDouble(token);
 
-				listValues.add(value);
+				stackValues.push(value);
 				lastCalculatedValue = value;
 
 			} catch (Exception e) {
 				// Exception equals an operator
 
-				double lastValue = (double) listValues.remove(listValues.size() - 1);
-
-				double lastButOneValue = (double) listValues.remove(listValues.size() - 1);
+				double lastValue = stackValues.pop();
+				double lastButOneValue = stackValues.pop();
 
 				if (token.equals("+")) {
 					lastCalculatedValue = lastButOneValue + lastValue;
@@ -50,7 +49,7 @@ public class PolishReverseNotation {
 					lastCalculatedValue = lastButOneValue / lastValue;
 				}
 
-				listValues.add(lastCalculatedValue);
+				stackValues.push(lastCalculatedValue);
 			}
 
 		}
