@@ -4,56 +4,55 @@ import java.util.Stack;
 
 public class PolishReverseNotation {
 
-	public static void main(String[] args) {
-		System.out.println(evaluate(""));
-		System.out.println(evaluate("1 2 3.5"));
-		System.out.println(evaluate("10000 123 +"));
-		System.out.println(evaluate("5 1 2 + 4 * + 3 -"));
-
-	}
-
 	public static double evaluate(String expr) {
-
-		if (expr.length() == 0) {
+		
+		if (expr.isEmpty()) {
 			return 0;
 		}
-
 		final Stack<Double> stackValues = new Stack<Double>();
-
-		double lastCalculatedValue = 0;
 
 		for (String token : expr.split(" ")) {
 
-			try {
-				double value = Double.parseDouble(token);
-
-				stackValues.push(value);
-				lastCalculatedValue = value;
-
-			} catch (Exception e) {
-				// Exception equals an operator
-
-				double lastValue = stackValues.pop();
-				double lastButOneValue = stackValues.pop();
-
-				if (token.equals("+")) {
-					lastCalculatedValue = lastButOneValue + lastValue;
+			if (isSign(token)) {
+				Double first = stackValues.pop();
+				Double second = stackValues.pop();
+				Double sol = (double) 0;
+				if (isAdd(token)) {
+					sol = first + second;
+				} else if (isMult(token)) {
+					sol = first * second;
+				} else if (isSub(token)) {
+					sol = second - first;
+				} else {
+					sol = second / first;
 				}
-				if (token.equals("-")) {
-					lastCalculatedValue = lastButOneValue - lastValue;
-				}
-				if (token.equals("*")) {
-					lastCalculatedValue = lastButOneValue * lastValue;
-				}
-				if (token.equals("/")) {
-					lastCalculatedValue = lastButOneValue / lastValue;
-				}
-
-				stackValues.push(lastCalculatedValue);
+				stackValues.push(sol);
+			} else {
+				stackValues.push(Double.parseDouble(token));
 			}
 
 		}
 
-		return lastCalculatedValue;
+		return stackValues.pop();
+	}
+
+	private static boolean isSign(String value) {
+		return isAdd(value) || isMult(value) || isSub(value) || isDiv(value);
+	}
+
+	private static boolean isAdd(String value) {
+		return "+".equals(value);
+	}
+
+	private static boolean isMult(String value) {
+		return "*".equals(value);
+	}
+
+	private static boolean isSub(String value) {
+		return "-".equals(value);
+	}
+
+	private static boolean isDiv(String value) {
+		return "/".equals(value);
 	}
 }
